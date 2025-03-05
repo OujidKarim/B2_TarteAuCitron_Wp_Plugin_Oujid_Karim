@@ -33,12 +33,13 @@ function tarteaucitron_sanitize_options($input) {
     $output['hashtag'] = sanitize_text_field($input['hashtag'] ?? '#tarteaucitron');
     $output['highPrivacy'] = isset($input['highPrivacy']) && $input['highPrivacy'] ? 1 : 0;
     $output['AcceptAllCta'] = isset($input['AcceptAllCta']) && $input['AcceptAllCta'] ? 1 : 0;
-    $output['orientation'] = in_array($input['orientation'] ?? 'top', array('top', 'bottom')) ? $input['orientation'] : 'top';
+    $output['orientation'] = in_array($input['orientation'] ?? 'top', array('top', 'bottom', 'popup', 'banner')) ? $input['orientation'] : 'top';
     $output['adblocker'] = isset($input['adblocker']) && $input['adblocker'] ? 1 : 0;
     $output['showAlertSmall'] = isset($input['showAlertSmall']) && $input['showAlertSmall'] ? 1 : 0;
     $output['cookieslist'] = isset($input['cookieslist']) && $input['cookieslist'] ? 1 : 0;
     return $output;
 }
+
 
 function tarteaucitron_add_settings_fields() {
     add_settings_section(
@@ -143,9 +144,12 @@ function tarteaucitron_orientation_field() {
     echo '<select name="tarteaucitron_options[orientation]">';
     echo '<option value="top" ' . selected($value, 'top', false) . '>Top</option>';
     echo '<option value="bottom" ' . selected($value, 'bottom', false) . '>Bottom</option>';
+    echo '<option value="popup" ' . selected($value, 'popup', false) . '>Popup</option>';
+    echo '<option value="banner" ' . selected($value, 'banner', false) . '>Banner</option>';
     echo '</select>';
-    echo '<p class="description">' . __('The big banner should be on \'top\' or \'bottom\'?', 'demo') . '</p>';
+    echo '<p class="description">' . __('The big banner should be on \'top\', \'bottom\', \'popup\' or \'banner\'?', 'demo') . '</p>';
 }
+
 
 function tarteaucitron_adblocker_field() {
     $options = get_option('tarteaucitron_options');
