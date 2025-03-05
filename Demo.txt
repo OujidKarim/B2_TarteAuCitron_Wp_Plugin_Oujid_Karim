@@ -1,0 +1,173 @@
+<?php
+
+/**
+ * @package Demo
+ * @version 1.0
+ */
+/*
+Plugin Name: Demo
+Plugin URI: http://wordpress.org/plugins/demo
+Description : First wordpress plugin Demo.
+Author: Karim Oujid
+Version: 1.0
+Author URI: https://youtu.be/dQw4w9WgXcQ?si=8nbziXDsUd9h56oq
+*/
+
+
+function tarteaucitron()
+{
+  wp_enqueue_script('tarteaucitron-js', "https://cdn.jsdelivr.net/npm/tarteaucitronjs@1.19.0/tarteaucitron.min.js", array(), null, false);
+}
+
+function addScript()
+{
+?>
+  <script type="text/javascript">
+    tarteaucitron.init({
+      "privacyUrl": "",
+      /* Url de la politique de confidentialité */
+      "bodyPosition": "top",
+      /* top place le bandeau de consentement au début du code html, mieux pour l'accessibilité */
+
+      "hashtag": "#tarteaucitron",
+      /* Hashtag qui permet d'ouvrir le panneau de contrôle  */
+      "cookieName": "tarteaucitron",
+      /* Nom du cookie (uniquement lettres et chiffres) */
+
+      "orientation": "middle",
+      /* Position de la bannière (top - bottom - popup - banner) */
+
+      "groupServices": true,
+      /* Grouper les services par catégorie */
+      "showDetailsOnClick": true,
+      /* Cliquer pour ouvrir la description */
+      "serviceDefaultState": "wait",
+      /* Statut par défaut (true - wait - false) */
+
+      "showAlertSmall": false,
+      /* Afficher la petite bannière en bas à droite */
+      "cookieslist": false,
+      /* Afficher la liste des cookies */
+
+      "closePopup": true,
+      /* Afficher un X pour fermer la bannière */
+
+      "showIcon": true,
+      /* Afficher un cookie pour ouvrir le panneau */
+      //"iconSrc": "", /* Optionnel: URL ou image en base64 */
+      "iconPosition": "BottomRight",
+      /* Position de l'icons: (BottomRight - BottomLeft - TopRight - TopLeft) */
+
+      "adblocker": false,
+      /* Afficher un message si un Adblocker est détecté */
+
+      "DenyAllCta": true,
+      /* Afficher le bouton Tout refuser */
+      "AcceptAllCta": true,
+      /* Afficher le bouton Tout accepter */
+      "highPrivacy": true,
+      /* Attendre le consentement */
+      "alwaysNeedConsent": false,
+      /* Demander le consentement même pour les services "Privacy by design" */
+
+      "handleBrowserDNTRequest": false,
+      /* Refuser tout par défaut si Do Not Track est activé sur le navigateur */
+
+      "removeCredit": false,
+      /* Retirer le lien de crédit vers tarteaucitron.io */
+      "moreInfoLink": true,
+      /* Afficher le lien En savoir plus */
+
+      "useExternalCss": false,
+      /* Mode expert : désactiver le chargement des fichiers .css tarteaucitron */
+      "useExternalJs": false,
+      /* Mode expert : désactiver le chargement des fichiers .js tarteaucitron */
+
+      //"cookieDomain": ".my-multisite-domaine.fr", /* Optionnel: domaine principal pour partager le consentement avec des sous domaines */
+
+      "readmoreLink": "",
+      /* Changer le lien En savoir plus par défaut */
+
+      "mandatory": true,
+      /* Afficher un message pour l'utilisation de cookies obligatoires */
+      "mandatoryCta": false,
+      /* Afficher un bouton pour les cookies obligatoires (déconseillé) */
+
+      //"customCloserId": "", /* Optionnel a11y: ID personnalisé pour ouvrir le panel */
+
+      "googleConsentMode": true,
+      /* Activer le Google Consent Mode v2 pour Google ads et GA4 */
+
+      "partnersList": true /* Afficher le détail du nombre de partenaires sur la bandeau */
+    });
+  </script>
+<?php
+}
+
+add_action('wp_enqueue_scripts', 'tarteaucitron');
+add_action('wp_head', 'addScript');
+
+function add_menu_tarteaucitron() {
+  add_menu_page(
+    'Tarteaucitron',
+    'Tarteaucitron',
+    'manage_options',
+    'tarteaucitron',
+    'tarteaucitron_admin_page'
+  );
+}
+add_action('admin_menu', 'add_menu_tarteaucitron');
+
+function tarteaucitron_admin_page() {
+  if (isset($_POST['submit'])) {
+    update_option('tarteaucitron_options', $_POST);
+  }
+
+  $options = get_option('tarteaucitron_options');
+?>
+
+<div class="wrap">
+  <h1>Paramètres de Tarteaucitron</h1>
+  <form method="post">
+    <table class="form-table">
+      <tr>
+        <th><label for="hashtag">Hashtag</label></th>
+        <td><input type="text" name="hashtag" id="hashtag" value="<?php echo esc_attr($options['hashtag']); ?>"></td>
+      </tr>
+      <tr>
+        <th><label for="highPrivacy">High privacy</label></th>
+        <td><input type="checkbox" name="highPrivacy" id="highPrivacy" <?php checked($options['highPrivacy'], 1); ?>></td>
+      </tr>
+      <tr>
+        <th><label for="AcceptAllCta">Accept all</label></th>
+        <td><input type="checkbox" name="AcceptAllCta" id="AcceptAllCta" <?php checked($options['AcceptAllCta'], 1); ?>></td>
+      </tr>
+      <tr>
+        <th><label for="orientation">Orientation</label></th>
+        <td>
+          <select name="orientation" id="orientation">
+            <option value="top" <?php selected($options['orientation'], 'top'); ?>>Top</option>
+            <option value="bottom" <?php selected($options['orientation'], 'bottom'); ?>>Bottom</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th><label for="adblocker">Adblocker</label></th>
+        <td><input type="checkbox" name="adblocker" id="adblocker" <?php checked($options['adblocker'], 1); ?>></td>
+      </tr>
+      <tr>
+        <th><label for="showAlertSmall">Petite bannière</label></th>
+        <td><input type="checkbox" name="showAlertSmall" id="showAlertSmall" <?php checked($options['showAlertSmall'], 1); ?>></td>
+      </tr>
+      <tr>
+        <th><label for="cookieslist">Liste des cookies</label></th>
+        <td><input type="checkbox" name="cookieslist" id="cookieslist" <?php checked($options['cookieslist'], 1); ?>></td>
+      </tr>
+    </table>
+    <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="Enregistrer"></p>
+  </form>
+</div>
+
+<?php
+}
+
